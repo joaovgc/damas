@@ -5,8 +5,9 @@ pygame.init()
 screen =  pygame.display.set_mode((800,850))
 pygame.display.set_caption('Jogo de Damas')
 fonte = pygame.font.SysFont('None', 60)
+fonte2 = pygame.font.SysFont('None', 80)  
 
-
+menuImg = pygame.image.load('menu.png')
 marrom = pygame.image.load('marrom.png')
 vermelha = pygame.image.load('vermelha.png')
 board = pygame.image.load('board.png')
@@ -20,9 +21,9 @@ for x in range(8):
 	for y in range(8):
 		matrizBoard[x].append(None)
 
-def blit_text(text, cor):
+def blit_text(text, cor, pos, fonte):
 	render = fonte.render(text, True, cor)
-	screen.blit(render, (0,800))
+	screen.blit(render, pos)
 
 def getXY(): # Retorna as coordenadas(8x8) da casa clickada.  
 	posX, posY = event.pos[0], event.pos[1]
@@ -66,20 +67,43 @@ for x in range(1,8,2):
 		else:
 			matrizBoard[x][y] = 'm'
 
+menu = True
+while menu: # Menu inicial
+	
+	screen.blit(menuImg, (0,0))
+	
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			pygame.quit(); sys.exit();
+		
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			
+			x ,y = event.pos
+			if (x in xrange(91, 725)) and (y in xrange(90, 175)):
+				print 'b'
+				menu = False
+				break
+			
+	pygame.display.update()
+
+
+
+
 selecionado = False # True se tiver selecionado uma peça.
 turno = 'm' # 'm' = marrom // 'v' = vermelho
 
 while True:
 	if turno == 'm':
-		text = 'Turno do jogador marrom.'
+		text = 'Turno do jogador 1.'
 		cor = (204,102,0)
 	elif turno == 'v':
-		text = 'Turno do jogador vermelho.'
+		text = 'Turno do jogador 2.'
 		cor = (204,0,0)
 	
 	screen.blit(board, (0,0)) # Blita o tabuleiro.
-	pygame.draw.rect(screen, (0,0,0), (0,800,800,100))
-	blit_text(text, cor)
+	pygame.draw.rect(screen, (205,191,172), (0,800,800,100))
+	pygame.draw.rect(screen, (225,212,192), (0,800,800,100), 7)
+	blit_text(text, cor, (5,805), fonte)
 	blitPieces() # Blita as peças na tela.
 		
 	for event in pygame.event.get():
@@ -108,8 +132,7 @@ while True:
 							turno = 'v'
 						elif turno == 'v':
 							turno = 'm'
-						
-						
+								
 	if selecionado: #Fazer a peça selecionada seguir o ponteiro.
 		x, y = pygame.mouse.get_pos()
 		x -= 28; y -= 25;
