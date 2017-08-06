@@ -1,5 +1,6 @@
 # damas
 Jogo de damas básico.
+
 Damas 0.2:
   - Palheta de cores melhorada.
   - Menu básico adcionado.
