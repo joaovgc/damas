@@ -1,6 +1,11 @@
 # damas
 Jogo de damas básico.
 
+Damas 0.3:
+  - Esqueleto do menu completo.
+  - Adcionado varias regras do jogo de damas.
+  - Adcionado quadrado verde para representar possiveis jogadas.
+
 Damas 0.2:
   - Palheta de cores melhorada.
   - Menu básico adcionado.
