@@ -48,6 +48,16 @@ def blitPieces():
 				screen.blit(vermelha, (i*100 + 20, j*100 + 18))
 			elif matrizBoard[j][i] == 'm':
 				screen.blit(marrom, (i*100 + 20, j*100 + 18))
+
+def blitVerde(): # Blitar quadrado verde indicando possiveis jogadas.
+	if len(possiveisJogadas) == 1:
+		py = possiveisJogadas[0][0]; px = possiveisJogadas[0][1] 
+		screen.blit(verde, (px*100, py*100))
+	elif len(possiveisJogadas) == 2:
+		py = possiveisJogadas[0][0]; px = possiveisJogadas[0][1]
+		py2 = possiveisJogadas[1][0]; px2 = possiveisJogadas[1][1]
+		screen.blit(verde, (px*100, py*100))
+		screen.blit(verde, (px2*100, py2*100))
 		
 # Colocar peças iniciais no tabuleiro:
 for x in range(0,8,2):
@@ -79,15 +89,20 @@ while menu: # Menu inicial
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			
 			x ,y = event.pos
-			if (x in xrange(91, 725)) and (y in xrange(90, 175)):
-				print 'b'
+			if (x in xrange(91, 725)) and (y in xrange(90, 175)):#1
 				menu = False
 				break
 			
+			elif (x in xrange(213, 574)) and (y in xrange(323, 389)):#2
+				print 'Manual'
+			
+			elif (x in xrange(148, 630)) and (y in xrange(531, 605)):#3
+				print 'Controles'
+			
+			elif (x in xrange(84, 720)) and (y in xrange(740, 820)):#4
+				print 'Sobre o jogo'
+				
 	pygame.display.update()
-
-
-
 
 selecionado = False # True se tiver selecionado uma peça.
 turno = 'm' # 'm' = marrom // 'v' = vermelho
@@ -102,8 +117,8 @@ while True:
 	
 	screen.blit(board, (0,0)) # Blita o tabuleiro.
 	pygame.draw.rect(screen, (205,191,172), (0,800,800,100))
-	pygame.draw.rect(screen, (225,212,192), (0,800,800,100), 7)
-	blit_text(text, cor, (5,805), fonte)
+	pygame.draw.rect(screen, (225,212,192), (0,800,800,100), 7) 
+	blit_text(text, cor, (5,805), fonte) # Texto do turno
 	blitPieces() # Blita as peças na tela.
 		
 	for event in pygame.event.get():
@@ -112,39 +127,85 @@ while True:
 		
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			x, y = getXY()
-			vX = x*100; vY = y*100;
 			
 			if not selecionado:
 				if matrizBoard[y][x] != None and matrizBoard[y][x] == turno:
+					possiveisJogadas = []
+					originalX = x; originalY = y;
+					if y%2 == 0:
+						
+						if turno == 'm': # Marrom par
+							if x == 0:
+								if matrizBoard[y-1][1] == None:
+									possiveisJogadas.append((y-1,1))
+							else:
+								for px in range(x-1, x+2, 2):
+									if matrizBoard[y-1][px] == None:
+										possiveisJogadas.append((y-1,px))
+						
+						elif turno == 'v': # Vermelho par
+							if x == 0:
+								if matrizBoard[y+1][1] == None:
+									possiveisJogadas.append((y+1,1))
+							else:
+								for px in range(x-1, x+2, 2):
+									if matrizBoard[y+1][px] == None:
+										possiveisJogadas.append((y+1,px))
+									
+					elif y%2 != 0:
+						if turno == 'm': # Marrom impar
+							if x == 7:
+								if matrizBoard[y-1][6] == None:
+									possiveisJogadas.append((y-1,6))
+							else:
+								for px in range(x-1, x+2, 2):
+									if matrizBoard[y-1][px] == None:
+										possiveisJogadas.append((y-1,px))
+														
+						elif turno == 'v': # Vermelho impar
+							if x == 7:
+								if matrizBoard[y+1][6] == None:
+									possiveisJogadas.append((y+1,6))
+							else:
+								for px in range(x-1, x+2, 2):
+									if matrizBoard[y+1][px] == None:
+										possiveisJogadas.append((y+1,px))
+									
+					if len(possiveisJogadas) != 0:
+						matrizBoard[y][x] = None
+						selecionado = True
 					
-					matrizBoard[y][x] = None
-					selecionado = True
-			
 			elif selecionado:
 				if matrizBoard[y][x] == None:
-					# Checar se a casa que foi clicada é marrom:
-					if (y%2 == 0 and x%2 == 0) or (y%2 != 0 and x%2 !=0):
+					if x == originalX and y == originalY:
 						matrizBoard[y][x] = turno
 						selecionado = False
-						
-						# Passar o turno:						
-						if turno == 'm':
-							turno = 'v'
-						elif turno == 'v':
-							turno = 'm'
-								
-	if selecionado: #Fazer a peça selecionada seguir o ponteiro.
-		x, y = pygame.mouse.get_pos()
-		x -= 28; y -= 25;
+					
+					else:
+						for p in possiveisJogadas:
+							if p[0] == y and p[1] == x:
+								if (y%2 == 0 and x%2 == 0) or \
+								(y%2 != 0 and x%2 !=0):
+									matrizBoard[y][x] = turno
+									selecionado = False
+									
+									# Passar o turno:						
+									if turno == 'm':
+										turno = 'v'
+									elif turno == 'v':
+										turno = 'm'
+										
+	if selecionado: # Peça seguindo ponteiro, rect verde para 
+		screenX, screenY = pygame.mouse.get_pos()
+		screenX -= 28; screenY -= 25;
+		
+		
+		blitVerde() # Blitar quadrado verde indicando possiveis jogadas.
+		
 		if turno == 'v':
-			screen.blit(vermelha, (x,y))
+			screen.blit(vermelha, (screenX,screenY))
 		else:
-			screen.blit(marrom, (x,y))
+			screen.blit(marrom, (screenX,screenY))
 		
-		
-	
-	
-	
-	
 	pygame.display.update()	
 	
