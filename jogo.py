@@ -12,7 +12,8 @@ marrom = pygame.image.load('marrom.png')
 vermelha = pygame.image.load('vermelha.png')
 board = pygame.image.load('board.png')
 verde = pygame.image.load('verde.png')
-
+dama_m = pygame.image.load('dama_m.png')
+dama_v = pygame.image.load('dama_v.png')
 
 matrizBoard = []
 for x in range(8):
@@ -48,7 +49,11 @@ def blitPieces():
 				screen.blit(vermelha, (i*100 + 20, j*100 + 18))
 			elif matrizBoard[j][i] == 'm':
 				screen.blit(marrom, (i*100 + 20, j*100 + 18))
-
+			elif matrizBoard[j][i] == 'dm':
+				screen.blit(dama_m, (i*100 + 20, j*100 + 18))
+			elif matrizBoard[j][i] == 'dv':
+				screen.blit(dama_v, (i*100 + 20, j*100 + 18))
+				
 def blitVerde(): # Blitar quadrado verde indicando possiveis jogadas.
 	if len(possiveisJogadas) == 1:
 		py = possiveisJogadas[0][0]; px = possiveisJogadas[0][1] 
@@ -58,7 +63,145 @@ def blitVerde(): # Blitar quadrado verde indicando possiveis jogadas.
 		py2 = possiveisJogadas[1][0]; px2 = possiveisJogadas[1][1]
 		screen.blit(verde, (px*100, py*100))
 		screen.blit(verde, (px2*100, py2*100))
+	
+	if len(possiveisComidas) == 1:
+		py = possiveisComidas[0][0]; px = possiveisComidas[0][1] 
+		screen.blit(verde, (px*100, py*100))
+	elif len(possiveisComidas) == 2:
+		py = possiveisComidas[0][0]; px = possiveisComidas[0][1]
+		py2 = possiveisComidas[1][0]; px2 = possiveisComidas[1][1]
+		screen.blit(verde, (px*100, py*100))
+		screen.blit(verde, (px2*100, py2*100))
 		
+def comerPraFrentePar(letra, ncomer):
+	if x == 0:
+		if ncomer:
+			if matrizBoard[y-1][1] == None:
+				possiveisJogadas.append((y-1,1))
+		
+		if y > 0 and matrizBoard[y-1][1] == letra:
+			if y > 1 and matrizBoard[y-2][2] == None:
+				comida.append((y-1,1))
+				possiveisComidas.append((y-2,2))
+			
+	else:
+		for px in range(x-1, x+2, 2):
+			if ncomer:
+				if y > 0 and matrizBoard[y-1][px] == None:
+					possiveisJogadas.append((y-1,px))
+			if y > 0 and matrizBoard[y-1][px] == letra:										
+				if px < x:
+					if y > 1 and px > 0 and matrizBoard[y-2][px-1] == None:
+						comida.append((y-1,px))
+						possiveisComidas.append((y-2,px-1))
+				else:											
+					if y > 1 and px < 7 and matrizBoard[y-2][px+1] == None:
+						comida.append((y-1,px))
+						possiveisComidas.append((y-2,px+1))
+
+def comerPraTrasPar(letra, ncomer):
+	if x == 0:
+		if ncomer:
+			if y < 7 and matrizBoard[y+1][1] == None:
+				possiveisJogadas.append((y+1,1))
+		if y < 7 and matrizBoard[y+1][1] == letra:
+			if y < 6 and matrizBoard[y+2][2] == None:
+				comida.append((y+1,1))
+				possiveisComidas.append((y+2,2))
+			
+	else:
+		for px in range(x-1, x+2, 2):
+			if ncomer:
+				if y < 7 and matrizBoard[y+1][px] == None:
+					possiveisJogadas.append((y+1,px))
+			if y < 7 and matrizBoard[y+1][px] == letra:
+				if px < x:
+					if (y < 6) and px > 0 and matrizBoard[y+2][px-1] == None: 
+						comida.append((y+1,px))
+						possiveisComidas.append((y+2,px-1))
+				else:
+					if y < 6 and px < 7 and matrizBoard[y+2][px+1] == None:
+						comida.append((y+1,px))
+						possiveisComidas.append((y+2,px+1))
+
+def comerPraFrenteImpar(letra, ncomer):
+	if x == 7:
+		if ncomer:
+			if y > 0 and matrizBoard[y-1][6] == None:
+				possiveisJogadas.append((y-1,6))
+		if y > 0 and matrizBoard[y-1][6] == letra:
+			if y > 1 and matrizBoard[y-2][5] == None:
+				comida.append((y-1,6))
+				possiveisComidas.append((y-2,5))
+	else:
+		for px in range(x-1, x+2, 2):
+			if ncomer:
+				if y > 0 and matrizBoard[y-1][px] == None:
+					possiveisJogadas.append((y-1,px))
+			if matrizBoard[y-1][px] == letra:
+				if px < x:
+					if y > 1 and px > 0 and matrizBoard[y-2][px-1] == None:
+						comida.append((y-1,px))
+						possiveisComidas.append((y-2,px-1))
+				else:											
+					if y > 1 and px < 7 and matrizBoard[y-2][px+1] == None:
+						comida.append((y-1,px))
+						possiveisComidas.append((y-2,px+1))
+
+def comerPraTrasImpar(letra, ncomer):
+	if x == 7:
+		if ncomer:
+			if y < 7 and matrizBoard[y+1][6] == None:
+				possiveisJogadas.append((y+1,6))
+		if y < 7 and matrizBoard[y+1][6] == letra:
+			if matrizBoard[y+2][5] == None:
+				comida.append((y+1,6))
+				possiveisComidas.append((y+2,5))
+	else:
+		
+		for px in range(x-1, x+2, 2):
+			if ncomer:
+				if y < 7 and matrizBoard[y+1][px] == None:
+					possiveisJogadas.append((y+1,px))
+			
+			if y < 7 and matrizBoard[y+1][px] == letra:
+				if px < x:
+					if  y < 6 and px > 0 and matrizBoard[y+2][px-1] == None:
+						comida.append((y+1,px))
+						possiveisComidas.append((y+2,px-1))
+				else:
+					if y < 6 and px < 7 and matrizBoard[y+2][px+1] == None:
+						comida.append((y+1,px))
+						possiveisComidas.append((y+2,px+1))
+						
+def getJogadas(possiveisJogadas, possiveisComidas, comida):
+	if matrizBoard[y][x] == 'dm': 
+		# Botar regras que controlam as damas.
+		pass
+	elif matrizBoard[y][x] == 'dv':
+		pass
+		
+	elif matrizBoard[y][x] != None and matrizBoard[y][x] == turno:
+		originalX = x; originalY = y;
+		if y%2 == 0:
+			if turno == 'm': # Marrom par
+				comerPraFrentePar('v', True)
+				comerPraTrasPar('v', False)
+				
+			elif turno == 'v': # Vermelho par
+				comerPraTrasPar('m', True)
+				comerPraFrentePar('m', False)
+		
+		elif y%2 != 0:
+			if turno == 'm': # Marrom impar
+				comerPraFrenteImpar('v', True)
+				comerPraTrasImpar('v', False)			
+			elif turno == 'v': # Vermelho impar
+				comerPraTrasImpar('m', True)
+				comerPraFrenteImpar('m', False)
+					
+		
+
 # Colocar peças iniciais no tabuleiro:
 for x in range(0,8,2):
 	if x == 4:
@@ -107,12 +250,20 @@ while menu: # Menu inicial
 selecionado = False # True se tiver selecionado uma peça.
 turno = 'm' # 'm' = marrom // 'v' = vermelho
 
+movimentosM = []
+movimentosV = []
+
+possiveisJogadas = []
+possiveisComidas = []
+comida = []
+
 while True:
 	if turno == 'm':
-		text = 'Turno do jogador 1.'
+		text = 'Turno do marrom.'
 		cor = (204,102,0)
+		
 	elif turno == 'v':
-		text = 'Turno do jogador 2.'
+		text = 'Turno do vermelho.'
 		cor = (204,0,0)
 	
 	screen.blit(board, (0,0)) # Blita o tabuleiro.
@@ -129,73 +280,96 @@ while True:
 			x, y = getXY()
 			
 			if not selecionado:
-				if matrizBoard[y][x] != None and matrizBoard[y][x] == turno:
+				if matrizBoard[y][x] == 'dm': 
+					# Botar regras que controlam as damas.
+					pass
+				elif matrizBoard[y][x] == 'dv':
+					pass
+					
+				elif matrizBoard[y][x] != None and matrizBoard[y][x] == turno:
 					possiveisJogadas = []
+					possiveisComidas = []
+					comida = []
 					originalX = x; originalY = y;
 					if y%2 == 0:
-						
 						if turno == 'm': # Marrom par
-							if x == 0:
-								if matrizBoard[y-1][1] == None:
-									possiveisJogadas.append((y-1,1))
-							else:
-								for px in range(x-1, x+2, 2):
-									if matrizBoard[y-1][px] == None:
-										possiveisJogadas.append((y-1,px))
-						
+							comerPraFrentePar('v', True)
+							comerPraTrasPar('v', False)
+							
 						elif turno == 'v': # Vermelho par
-							if x == 0:
-								if matrizBoard[y+1][1] == None:
-									possiveisJogadas.append((y+1,1))
-							else:
-								for px in range(x-1, x+2, 2):
-									if matrizBoard[y+1][px] == None:
-										possiveisJogadas.append((y+1,px))
-									
+							comerPraTrasPar('m', True)
+							comerPraFrentePar('m', False)
+					
 					elif y%2 != 0:
 						if turno == 'm': # Marrom impar
-							if x == 7:
-								if matrizBoard[y-1][6] == None:
-									possiveisJogadas.append((y-1,6))
-							else:
-								for px in range(x-1, x+2, 2):
-									if matrizBoard[y-1][px] == None:
-										possiveisJogadas.append((y-1,px))
-														
+							comerPraFrenteImpar('v', True)
+							comerPraTrasImpar('v', False)			
 						elif turno == 'v': # Vermelho impar
-							if x == 7:
-								if matrizBoard[y+1][6] == None:
-									possiveisJogadas.append((y+1,6))
-							else:
-								for px in range(x-1, x+2, 2):
-									if matrizBoard[y+1][px] == None:
-										possiveisJogadas.append((y+1,px))
+							comerPraTrasImpar('m', True)
+							comerPraFrenteImpar('m', False)
 									
-					if len(possiveisJogadas) != 0:
+					if len(possiveisComidas) != 0: # Se for possivel comer uma, elimina as outras possibilidades.
+						possiveisJogadas = []
+						matrizBoard[y][x] = None
+						selecionado = True
+					
+					elif len(possiveisJogadas) != 0:
 						matrizBoard[y][x] = None
 						selecionado = True
 					
 			elif selecionado:
+				
 				if matrizBoard[y][x] == None:
+					
 					if x == originalX and y == originalY:
 						matrizBoard[y][x] = turno
 						selecionado = False
 					
 					else:
+						passarTurno = False 
 						for p in possiveisJogadas:
 							if p[0] == y and p[1] == x:
 								if (y%2 == 0 and x%2 == 0) or \
 								(y%2 != 0 and x%2 !=0):
 									matrizBoard[y][x] = turno
 									selecionado = False
+									passarTurno = True
+							
+						indexc = 0
+						for p in possiveisComidas:
+							
+							if p[0] == y and p[1] == x:
+								if (y%2 == 0 and x%2 == 0) or \
+								(y%2 != 0 and x%2 !=0):
+									matrizBoard[comida[indexc][0]][comida[indexc][1]] = None
+									matrizBoard[y][x] = turno
+									selecionado = False
+									passarTurno = True
 									
-									# Passar o turno:						
-									if turno == 'm':
-										turno = 'v'
-									elif turno == 'v':
-										turno = 'm'
-										
+							indexc += 1
+						
+						if len(possiveisComidas) != 0:
+							possiveisJogadas = []
+							possiveisComidas = []
+							comida = []
+							getJogadas(possiveisJogadas, possiveisComidas, comida)
+							if len(possiveisComidas) != 0:
+								passarTurno = False							
+							
+						if passarTurno:
+							if turno == 'm' or turno == 'dm':
+								if y == 0:
+									matrizBoard[y][x] = 'dm' 
+								
+								turno = 'v'
+							elif turno == 'v' or turno == 'dv':
+								if y == 7:
+									matrizBoard[y][x] = 'dv'
+									
+								turno = 'm'
+							
 	if selecionado: # Peça seguindo ponteiro, rect verde para 
+		
 		screenX, screenY = pygame.mouse.get_pos()
 		screenX -= 28; screenY -= 25;
 		
