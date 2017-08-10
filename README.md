@@ -1,6 +1,11 @@
 # damas
 Jogo de damas básico.
 
+Damas 0.4:
+  - Varias regras implementadas
+  - Nova imagem para representar peças que se tornaram damas.
+  - Novas funções adcionadas para melhorar o código.
+
 Damas 0.3:
   - Esqueleto do menu completo.
   - Adcionado varias regras do jogo de damas.
