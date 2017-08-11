@@ -257,6 +257,7 @@ possiveisJogadas = []
 possiveisComidas = []
 comida = []
 
+switch = 1
 while True:
 	if turno == 'm':
 		text = 'Turno do marrom.'
@@ -271,6 +272,20 @@ while True:
 	pygame.draw.rect(screen, (225,212,192), (0,800,800,100), 7) 
 	blit_text(text, cor, (5,805), fonte) # Texto do turno
 	blitPieces() # Blita as peças na tela.
+	
+	# checar se tem alguma peça que tem que comer:
+	if switch == 1:
+		todasPossiveisComidas = {}
+		for y in range(len(matrizBoard)):
+			for x in range(8):
+				possiveisJogadas = []; possiveisComidas = []; comida = [];
+				if matrizBoard[y][x] == turno:
+					getJogadas(possiveisJogadas, possiveisComidas, comida)
+					if len(possiveisComidas) != 0:
+						todasPossiveisComidas[(y, x)] = possiveisComidas, comida
+					
+		switch = 0
+		
 		
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -278,13 +293,21 @@ while True:
 		
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			x, y = getXY()
-			
+			originalX = None; originalY = None;
 			if not selecionado:
 				if matrizBoard[y][x] == 'dm': 
 					# Botar regras que controlam as damas.
 					pass
 				elif matrizBoard[y][x] == 'dv':
 					pass
+				
+				if len(todasPossiveisComidas) != 0:
+					if (y, x) in todasPossiveisComidas:
+						possiveisComidas = todasPossiveisComidas[(y, x)][0]
+						comida = todasPossiveisComidas[(y, x)][1]
+						
+						matrizBoard[y][x] = None
+						selecionado = True
 					
 				elif matrizBoard[y][x] != None and matrizBoard[y][x] == turno:
 					possiveisJogadas = []
@@ -317,11 +340,15 @@ while True:
 						matrizBoard[y][x] = None
 						selecionado = True
 					
+					
+				
+						
 			elif selecionado:
 				
 				if matrizBoard[y][x] == None:
 					
 					if x == originalX and y == originalY:
+						print 't'
 						matrizBoard[y][x] = turno
 						selecionado = False
 					
@@ -362,11 +389,13 @@ while True:
 									matrizBoard[y][x] = 'dm' 
 								
 								turno = 'v'
+								switch = 1
 							elif turno == 'v' or turno == 'dv':
 								if y == 7:
 									matrizBoard[y][x] = 'dv'
 									
 								turno = 'm'
+								switch = 1
 							
 	if selecionado: # Peça seguindo ponteiro, rect verde para 
 		
