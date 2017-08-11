@@ -199,9 +199,7 @@ def getJogadas(possiveisJogadas, possiveisComidas, comida):
 			elif turno == 'v': # Vermelho impar
 				comerPraTrasImpar('m', True)
 				comerPraFrenteImpar('m', False)
-					
-		
-
+						
 # Colocar peças iniciais no tabuleiro:
 for x in range(0,8,2):
 	if x == 4:
@@ -285,8 +283,7 @@ while True:
 						todasPossiveisComidas[(y, x)] = possiveisComidas, comida
 					
 		switch = 0
-		
-		
+				
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit(); sys.exit();
@@ -338,10 +335,7 @@ while True:
 					
 					elif len(possiveisJogadas) != 0:
 						matrizBoard[y][x] = None
-						selecionado = True
-					
-					
-				
+						selecionado = True														
 						
 			elif selecionado:
 				
@@ -401,8 +395,7 @@ while True:
 		
 		screenX, screenY = pygame.mouse.get_pos()
 		screenX -= 28; screenY -= 25;
-		
-		
+				
 		blitVerde() # Blitar quadrado verde indicando possiveis jogadas.
 		
 		if turno == 'v':
