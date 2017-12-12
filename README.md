@@ -1,6 +1,8 @@
 # damas
 Jogo de damas básico.
 
+- Projeto abandonado, pretendo refazer no futuro usando OOP.
+
 Damas 0.4:
   - Varias regras implementadas
   - Nova imagem para representar peças que se tornaram damas.
